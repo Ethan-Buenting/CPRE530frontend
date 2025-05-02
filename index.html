@@ -30,13 +30,16 @@
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ username, password })
       })
-      .then(res => {
-        if (!res.ok) throw new Error("Login failed");
-        return res.json();
-      })
+      .then(res => res.text())
       .then(data => {
-        localStorage.setItem("userId", data.userId);
-        window.location.href = "home.html"; // go to modules page
+        console.log("Response from backend:", data);
+
+        if (data === "Login Successful") {
+          localStorage.setItem("username", username); // ✅ store the username
+          window.location.href = "home.html";
+        } else {
+          alert(data); // ❌ shows exact message from backend (e.g. "Incorrect password")
+        }
       })
       .catch(err => {
         console.error("Login error:", err); // Makes the error visible in Dev Tools
@@ -55,15 +58,21 @@
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ name, username, password })
       })
-      .then(res => {
-        if (!res.ok) throw new Error("Registration failed");
-        return res.json();
-      })
+      .then(res => res.text())
       .then(data => {
-        localStorage.setItem("userId", data.userId);
-        window.location.href = "home.html";
+        console.log("Response from backend: ", data);
+
+        if(data === "User created Successfully") {
+          localStorage.setItem("username", username);
+          window.location.href = "home.html";
+        } else {
+          alert(data);
+        }
       })
-      .catch(err => alert("Registration failed"));
+      .catch(err => {
+        console.error("Register error:", err); // Makes the error visible in Dev Tools
+        alert("Register failed");
+      });
     }
   </script>
 </body>
