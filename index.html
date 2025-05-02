@@ -21,6 +21,7 @@
     const backendUrl = "https://cyberquestjava.onrender.com";
 
     function login() {
+      console.log("Login clicked");
       const username = document.getElementById("username").value;
       const password = document.getElementById("password").value;
 
@@ -37,7 +38,11 @@
         localStorage.setItem("userId", data.userId);
         window.location.href = "home.html"; // go to modules page
       })
-      .catch(err => alert("Login failed"));
+      .catch(err => {
+        console.error("Login error:", err); // Makes the error visible in Dev Tools
+        alert("Login failed");
+      });
+
     }
 
     function register() {
@@ -45,7 +50,7 @@
       const password = document.getElementById("password2").value;
       const name = document.getElementById("name2").value;
 
-      fetch(`${backendUrl}/api/user/register`, {
+      fetch(`${backendUrl}/api/users/register`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ name, username, password })
