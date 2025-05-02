@@ -10,6 +10,11 @@
   <input id="password" placeholder="Password" type="password" />
   <br>
   <button onclick="login()">Login</button>
+  <br>
+  <input id="name2" placeholder="Name" />
+  <input id="username2" placeholder="Username" />
+  <input id="password2" placeholder="Password" />
+  <br>
   <button onclick="register()">Register</button>
 
   <script>
@@ -36,13 +41,14 @@
     }
 
     function register() {
-      const username = document.getElementById("username").value;
-      const password = document.getElementById("password").value;
+      const username = document.getElementById("username2").value;
+      const password = document.getElementById("password2").value;
+      const name = document.getElementById("name2").value;
 
       fetch(`${backendUrl}/api/user/register`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ username, password })
+        body: JSON.stringify({ name, username, password })
       })
       .then(res => {
         if (!res.ok) throw new Error("Registration failed");
