@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Login</title>
+</head>
+<body>
+  <h2>Login or Register</h2>
+
+  <input id="username" placeholder="Username" />
+  <input id="password" placeholder="Password" type="password" />
+  <br>
+  <button onclick="login()">Login</button>
+  <button onclick="register()">Register</button>
+
+  <script>
+    const backendUrl = "https://cyberquestjava.onrender.com";
+
+    function login() {
+      const username = document.getElementById("username").value;
+      const password = document.getElementById("password").value;
+
+      fetch(`${backendUrl}/api/login`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ username, password })
+      })
+      .then(res => {
+        if (!res.ok) throw new Error("Login failed");
+        return res.json();
+      })
+      .then(data => {
+        localStorage.setItem("userId", data.userId);
+        window.location.href = "home.html"; // go to modules page
+      })
+      .catch(err => alert("Login failed"));
+    }
+
+    function register() {
+      const username = document.getElementById("username").value;
+      const password = document.getElementById("password").value;
+
+      fetch(`${backendUrl}/api/register`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ username, password })
+      })
+      .then(res => {
+        if (!res.ok) throw new Error("Registration failed");
+        return res.json();
+      })
+      .then(data => {
+        localStorage.setItem("userId", data.userId);
+        window.location.href = "home.html";
+      })
+      .catch(err => alert("Registration failed"));
+    }
+  </script>
+</body>
+</html>
