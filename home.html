@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>CyberQuest - Home</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 20px;
+      background: #f7f7f7;
+    }
+    .module {
+      background: #fff;
+      border: 1px solid #ddd;
+      border-radius: 10px;
+      padding: 20px;
+      margin-bottom: 15px;
+      box-shadow: 0 0 5px rgba(0,0,0,0.1);
+    }
+    .module h2 {
+      margin-top: 0;
+    }
+    .module button {
+      padding: 10px 20px;
+      border: none;
+      background: #007bff;
+      color: white;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+    .module button:hover {
+      background: #0056b3;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>Welcome to CyberQuest</h1>
+  <p>Select a module below to begin learning:</p>
+
+  <div class="module">
+    <h2>Module 1: What is the Internet?</h2>
+    <button onclick="goToModule(1)">Start Module</button>
+  </div>
+  <div class="module">
+    <h2>Module 2: How Data Moves</h2>
+    <button onclick="goToModule(2)">Start Module</button>
+  </div>
+  <div class="module">
+    <h2>Module 3: IP Addresses</h2>
+    <button onclick="goToModule(3)">Start Module</button>
+  </div>
+  <div class="module">
+    <h2>Module 4: Websites & Servers</h2>
+    <button onclick="goToModule(4)">Start Module</button>
+  </div>
+  <div class="module">
+    <h2>Module 5: Email & Messaging</h2>
+    <button onclick="goToModule(5)">Start Module</button>
+  </div>
+  <div class="module">
+    <h2>Module 6: Cybersecurity Basics</h2>
+    <button onclick="goToModule(6)">Start Module</button>
+  </div>
+  <div class="module">
+    <h2>Module 7: Online Safety</h2>
+    <button onclick="goToModule(7)">Start Module</button>
+  </div>
+  <div class="module">
+    <h2>Module 8: How the Internet Helps Us</h2>
+    <button onclick="goToModule(8)">Start Module</button>
+  </div>
+
+  <script>
+    // Make sure the user is logged in
+    const userId = localStorage.getItem("userId");
+    if (!userId) {
+      window.location.href = "index.html"; // Redirect if not logged in
+    }
+
+    function goToModule(num) {
+      window.location.href = `module${num}.html`;
+    }
+  </script>
+</body>
+</html>
