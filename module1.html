@@ -7,26 +7,32 @@
   <style>
     body {
       font-family: Arial, sans-serif;
-      margin: 20px;
       text-align: center;
+      margin: 30px;
     }
 
     h2 {
       margin-bottom: 10px;
     }
 
+    #container {
+      position: relative;
+      height: 400px;
+      width: 100%;
+    }
+
     #cloud {
-      margin: 30px auto;
+      margin: 0 auto;
       width: 300px;
       height: 300px;
       border: 3px dashed #00bfff;
       border-radius: 50%;
+      background-color: #f0f8ff;
       position: relative;
-      background: #f0f8ff;
       z-index: 1;
       display: flex;
-      align-items: center;
       justify-content: center;
+      align-items: center;
       font-size: 1.2em;
     }
 
@@ -38,15 +44,14 @@
       margin: 10px;
       border-radius: 8px;
       cursor: grab;
-      display: inline-block;
-      position: relative;
+      position: absolute;
       z-index: 10;
     }
 
     #description {
       margin-top: 20px;
       font-style: italic;
-      min-height: 40px;
+      min-height: 30px;
     }
   </style>
 </head>
@@ -55,15 +60,15 @@
   <h2>Build the Internet!</h2>
   <p>Drag each network into the Internet Cloud to learn how they're all connected.</p>
 
-  <div>
-    <div class="draggable" data-name="home">🏠 Home</div>
-    <div class="draggable" data-name="school">🏫 School</div>
-    <div class="draggable" data-name="library">📚 Library</div>
-    <div class="draggable" data-name="business">🏢 Business</div>
-    <div class="draggable" data-name="datacenter">💾 Data Center</div>
-  </div>
+  <div id="container">
+    <div class="draggable" data-name="home" style="top: 0; left: 20px;">🏠 Home</div>
+    <div class="draggable" data-name="school" style="top: 0; left: 140px;">🏫 School</div>
+    <div class="draggable" data-name="library" style="top: 0; left: 260px;">📚 Library</div>
+    <div class="draggable" data-name="business" style="top: 100px; left: 80px;">🏢 Business</div>
+    <div class="draggable" data-name="datacenter" style="top: 100px; left: 200px;">💾 Data Center</div>
 
-  <div id="cloud">🌐<br><small>Internet</small></div>
+    <div id="cloud">🌐<br><small>Internet</small></div>
+  </div>
 
   <div id="description"></div>
 
@@ -87,8 +92,8 @@
       listeners: {
         move(event) {
           const target = event.target;
-          const x = (parseFloat(target.getAttribute('data-x')) || 0) + event.dx;
-          const y = (parseFloat(target.getAttribute('data-y')) || 0) + event.dy;
+          let x = (parseFloat(target.getAttribute('data-x')) || 0) + event.dx;
+          let y = (parseFloat(target.getAttribute('data-y')) || 0) + event.dy;
 
           target.style.transform = `translate(${x}px, ${y}px)`;
           target.setAttribute('data-x', x);
@@ -99,11 +104,13 @@
 
     interact('#cloud').dropzone({
       accept: '.draggable',
-      overlap: 0.5, // requires at least 50% overlap
+      overlap: 0.3,
       ondrop(event) {
         const name = event.relatedTarget.getAttribute('data-name');
         document.getElementById('description').textContent = descriptions[name];
-        event.relatedTarget.style.opacity = 0.5;
+
+        // Optional visual feedback
+        event.relatedTarget.style.opacity = 0.6;
         event.relatedTarget.style.pointerEvents = 'none';
       }
     });
