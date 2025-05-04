@@ -45,6 +45,8 @@
   </div>
 
   <script>
+    const backendUrl = "https://cyberquestjava.onrender.com";
+    
     const steps = [
       { id: "client", text: "You're sending a message from your computer." },
       { id: "router", text: "The router sends your data out of your house." },
@@ -68,7 +70,7 @@
           document.getElementById(step.id).classList.remove("highlight");
           index++;
           nextStep();
-        }, 1000);
+        }, 5000);
       }
 
       nextStep();
