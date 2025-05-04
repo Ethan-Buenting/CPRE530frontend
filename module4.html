@@ -181,8 +181,8 @@
         })
         .then(res => res.text())
         .then(data => {
-            console.log("Response from backend:", data); //To log progress in the developer log (F12)
             console.log("Module Index: ", moduleIndex);
+            console.log("Response from backend:", data); //To log progress in the developer log (F12)
             if (data === "Module Updated Successfully") {
                 window.location.href = "home.html";
             } else {
