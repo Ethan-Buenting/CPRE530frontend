@@ -102,25 +102,23 @@
       canvas.height = container.offsetHeight;
     }
 
-    function getCenterPosition(element) {
-      const rect = element.getBoundingClientRect();
-      return {
-        x: rect.left + rect.width / 2,
-        y: rect.top + rect.height / 2
-      };
-    }
-
     function drawLine(fromEl, toEl) {
-      const from = getCenterPosition(fromEl);
-      const to = getCenterPosition(toEl);
-      const canvasRect = canvas.getBoundingClientRect();
+        const fromRect = fromEl.getBoundingClientRect();
+        const toRect = toEl.getBoundingClientRect();
+        const canvasRect = canvas.getBoundingClientRect();
 
-      ctx.beginPath();
-      ctx.moveTo(from.x - canvasRect.left, from.y - canvasRect.top);
-      ctx.lineTo(to.x - canvasRect.left, to.y - canvasRect.top);
-      ctx.strokeStyle = "#007bff";
-      ctx.lineWidth = 2;
-      ctx.stroke();
+        const fromX = fromRect.right - canvasRect.left;
+        const fromY = fromRect.top + fromRect.height / 2 - canvasRect.top;
+
+        const toX = toRect.left - canvasRect.left;
+        const toY = toRect.top + toRect.height / 2 - canvasRect.top;
+
+        ctx.beginPath();
+        ctx.moveTo(fromX, fromY);
+        ctx.lineTo(toX, toY);
+        ctx.strokeStyle = "#007bff";
+        ctx.lineWidth = 2;
+        ctx.stroke();
     }
 
     function clearSelections() {
