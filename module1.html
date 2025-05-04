@@ -2,79 +2,110 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Module 1: The Internet</title>
+  <title>Module 1: What is the Internet?</title>
+  <script src="https://cdn.jsdelivr.net/npm/interactjs/dist/interact.min.js"></script>
   <style>
-    .section { display: none; margin-bottom: 20px; }
-    .active { display: block; }
+    body {
+      font-family: Arial, sans-serif;
+      margin: 20px;
+      text-align: center;
+    }
 
-    .layer-button {
+    h2 {
+      margin-bottom: 10px;
+    }
+
+    #cloud {
+      margin: 20px auto;
+      width: 300px;
+      height: 300px;
+      border: 3px dashed #00bfff;
+      border-radius: 50%;
+      position: relative;
+      background: #f0f8ff;
+    }
+
+    .draggable {
+      width: 100px;
       padding: 10px;
-      margin: 5px;
       background: #007bff;
       color: white;
-      border: none;
-      border-radius: 5px;
-      cursor: pointer;
+      margin: 10px;
+      border-radius: 8px;
+      cursor: grab;
+      display: inline-block;
     }
 
-    .layer-button:hover {
-      background: #0056b3;
-    }
-
-    #layer-info {
+    #description {
       margin-top: 20px;
       font-style: italic;
+      min-height: 40px;
     }
   </style>
 </head>
 <body>
 
-  <!-- Section 1: Intro -->
-  <div id="intro" class="section active">
-    <h2>What is the Internet?</h2>
-    <p>
-      The internet is a massive network that connects computers around the world. It lets us send messages,
-      watch videos, visit websites, and play games by moving data between devices using agreed-upon rules called protocols.
-    </p>
-    <button onclick="showSection('tcpInteractive')">Next</button>
+  <h2>Build the Internet!</h2>
+  <p>Drag each network into the Internet Cloud to learn how they're all connected.</p>
+
+  <div>
+    <div class="draggable" data-name="home">🏠 Home</div>
+    <div class="draggable" data-name="school">🏫 School</div>
+    <div class="draggable" data-name="library">📚 Library</div>
+    <div class="draggable" data-name="business">🏢 Business</div>
+    <div class="draggable" data-name="datacenter">💾 Data Center</div>
   </div>
 
-  <!-- Section 2: TCP/IP Layers Interactive -->
-  <div id="tcpInteractive" class="section">
-    <h2>TCP/IP Model Layers</h2>
-    <p>Click on each layer below to learn what it does:</p>
+  <div id="cloud">🌐<br><small>Internet</small></div>
 
-    <div>
-      <button class="layer-button" onclick="showLayer('application')">Application</button>
-      <button class="layer-button" onclick="showLayer('transport')">Transport</button>
-      <button class="layer-button" onclick="showLayer('network')">Network</button>
-      <button class="layer-button" onclick="showLayer('physical')">Physical</button>
-    </div>
+  <div id="description"></div>
 
-    <div id="layer-info"></div>
-    <div>
-        <button onclick="completeModule(1)">Mark Complete & Go Home</button>
-    </div>
+  <div>
+    <button onclick="completeModule(1)">Mark Complete & Go Home</button>
   </div>
 
   <script>
     const backendUrl = "https://cyberquestjava.onrender.com";
 
-    function showSection(id) {
-      document.querySelectorAll('.section').forEach(sec => sec.classList.remove('active'));
-      document.getElementById(id).classList.add('active');
+    const descriptions = {
+      home: "Home networks connect families and personal devices to the internet.",
+      school: "Schools use networks to let students learn, communicate, and access educational content.",
+      library: "Libraries connect to the internet so anyone can research or browse online.",
+      business: "Businesses rely on the internet to communicate, work remotely, and serve customers.",
+      datacenter: "Data centers store and send information like websites, videos, and files across the world."
+    };
+
+    interact('.draggable')
+      .draggable({
+        inertia: true,
+        modifiers: [
+          interact.modifiers.restrictRect({ restriction: 'parent', endOnly: true })
+        ],
+        autoScroll: true,
+        listeners: {
+          move: dragMoveListener
+        }
+      });
+
+    function dragMoveListener (event) {
+      const target = event.target;
+      const x = (parseFloat(target.getAttribute('data-x')) || 0) + event.dx;
+      const y = (parseFloat(target.getAttribute('data-y')) || 0) + event.dy;
+
+      target.style.transform = `translate(${x}px, ${y}px)`;
+      target.setAttribute('data-x', x);
+      target.setAttribute('data-y', y);
     }
 
-    function showLayer(layer) {
-      const layerDescriptions = {
-        application: "The Application layer is where communication begins — like websites, email, and chat apps. It’s what you see and interact with.",
-        transport: "The Transport layer breaks data into smaller chunks (segments), ensures they’re delivered reliably, and reassembles them on arrival.",
-        network: "The Network layer decides the path the data takes using IP addresses. It handles routing across different networks.",
-        physical: "The Physical layer deals with actual data transmission — like cables, radio signals, or Wi-Fi that carry the data from one device to another."
-      };
-
-      document.getElementById('layer-info').textContent = layerDescriptions[layer];
-    }
+    interact('#cloud').dropzone({
+      accept: '.draggable',
+      ondrop(event) {
+        const name = event.relatedTarget.getAttribute('data-name');
+        document.getElementById('description').textContent = descriptions[name];
+        event.relatedTarget.style.opacity = 0.5;
+        event.relatedTarget.style.pointerEvents = 'none'; // disable further dragging
+      }
+    });
 
     function completeModule(moduleIndex) {
         const username = localStorage.getItem("username");

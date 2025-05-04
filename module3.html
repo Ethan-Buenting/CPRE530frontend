@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>How Data Moves</title>
+  <style>
+    .node {
+      display: inline-block;
+      width: 120px;
+      height: 80px;
+      margin: 20px;
+      border: 2px solid black;
+      text-align: center;
+      vertical-align: top;
+      padding: 10px;
+      border-radius: 10px;
+    }
+
+    .highlight {
+      background-color: lightgreen;
+    }
+
+    #info {
+      margin-top: 20px;
+      font-style: italic;
+    }
+  </style>
+</head>
+<body>
+
+  <h2>Send a Message Across the Internet!</h2>
+
+  <div id="client" class="node">Your Computer</div>
+  <div id="router" class="node">Router</div>
+  <div id="isp" class="node">ISP</div>
+  <div id="server" class="node">Website Server</div>
+
+  <div>
+    <button onclick="sendPacket()">Send Message</button>
+  </div>
+
+  <div id="info"></div>
+  <div>
+    <button onclick="completeModule(3)">Mark Complete & Go Home</button>
+  </div>
+
+  <script>
+    const backendUrl = "https://cyberquestjava.onrender.com";
+    
+    const steps = [
+      { id: "client", text: "You're sending a message from your computer." },
+      { id: "router", text: "The router sends your data out of your house." },
+      { id: "isp", text: "Your Internet Service Provider (ISP) forwards it." },
+      { id: "server", text: "The message reaches the website's server!" }
+    ];
+
+    function sendPacket() {
+      let index = 0;
+      document.getElementById("info").textContent = "";
+      document.querySelectorAll('.node').forEach(n => n.classList.remove("highlight"));
+
+      function nextStep() {
+        if (index >= steps.length) return;
+
+        const step = steps[index];
+        document.getElementById(step.id).classList.add("highlight");
+        document.getElementById("info").textContent = step.text;
+
+        setTimeout(() => {
+          document.getElementById(step.id).classList.remove("highlight");
+          index++;
+          nextStep();
+        }, 5000);
+      }
+
+      nextStep();
+    }
+
+    function completeModule(moduleIndex) {
+        const username = localStorage.getItem("username");
+        if (!username) {
+        alert("No user logged in.");
+        return;
+        }
+
+        fetch(`${backendUrl}/api/users/module`, {
+            method: "PUT",
+            headers: {"Content-Type": "application/json"},
+            body: JSON.stringify({ username, moduleIndex})
+        })
+        .then(res => res.text())
+        .then(data => {
+            console.log("Response from backend:", data); //To log progress in the developer log (F12)
+            if (data === "Module Updated Successfully") {
+                window.location.href = "home.html";
+            } else {
+                alert(data);
+            }
+        })
+        .catch(err => {
+            console.error("Failed to update progress:", err);
+            alert("Could not save progress.");
+        });
+    }
+  </script>
+
+</body>
+</html>

@@ -2,25 +2,26 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>How Data Moves</title>
+  <title>Module 1: The Internet</title>
   <style>
-    .node {
-      display: inline-block;
-      width: 120px;
-      height: 80px;
-      margin: 20px;
-      border: 2px solid black;
-      text-align: center;
-      vertical-align: top;
+    .section { display: none; margin-bottom: 20px; }
+    .active { display: block; }
+
+    .layer-button {
       padding: 10px;
-      border-radius: 10px;
+      margin: 5px;
+      background: #007bff;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
     }
 
-    .highlight {
-      background-color: lightgreen;
+    .layer-button:hover {
+      background: #0056b3;
     }
 
-    #info {
+    #layer-info {
       margin-top: 20px;
       font-style: italic;
     }
@@ -28,52 +29,51 @@
 </head>
 <body>
 
-  <h2>Send a Message Across the Internet!</h2>
-
-  <div id="client" class="node">Your Computer</div>
-  <div id="router" class="node">Router</div>
-  <div id="isp" class="node">ISP</div>
-  <div id="server" class="node">Website Server</div>
-
-  <div>
-    <button onclick="sendPacket()">Send Message</button>
+  <!-- Section 1: Intro -->
+  <div id="intro" class="section active">
+    <h2>What is the Internet?</h2>
+    <p>
+      The internet is a massive network that connects computers around the world. It lets us send messages,
+      watch videos, visit websites, and play games by moving data between devices using agreed-upon rules called protocols.
+    </p>
+    <button onclick="showSection('tcpInteractive')">Next</button>
   </div>
 
-  <div id="info"></div>
-  <div>
-    <button onclick="completeModule(1)">Mark Complete & Go Home</button>
+  <!-- Section 2: TCP/IP Layers Interactive -->
+  <div id="tcpInteractive" class="section">
+    <h2>TCP/IP Model Layers</h2>
+    <p>Click on each layer below to learn what it does:</p>
+
+    <div>
+      <button class="layer-button" onclick="showLayer('application')">Application</button>
+      <button class="layer-button" onclick="showLayer('transport')">Transport</button>
+      <button class="layer-button" onclick="showLayer('network')">Network</button>
+      <button class="layer-button" onclick="showLayer('physical')">Physical</button>
+    </div>
+
+    <div id="layer-info"></div>
+    <div>
+        <button onclick="completeModule(2)">Mark Complete & Go Home</button>
+    </div>
   </div>
 
   <script>
     const backendUrl = "https://cyberquestjava.onrender.com";
-    
-    const steps = [
-      { id: "client", text: "You're sending a message from your computer." },
-      { id: "router", text: "The router sends your data out of your house." },
-      { id: "isp", text: "Your Internet Service Provider (ISP) forwards it." },
-      { id: "server", text: "The message reaches the website's server!" }
-    ];
 
-    function sendPacket() {
-      let index = 0;
-      document.getElementById("info").textContent = "";
-      document.querySelectorAll('.node').forEach(n => n.classList.remove("highlight"));
+    function showSection(id) {
+      document.querySelectorAll('.section').forEach(sec => sec.classList.remove('active'));
+      document.getElementById(id).classList.add('active');
+    }
 
-      function nextStep() {
-        if (index >= steps.length) return;
+    function showLayer(layer) {
+      const layerDescriptions = {
+        application: "The Application layer is where communication begins — like websites, email, and chat apps. It’s what you see and interact with.",
+        transport: "The Transport layer breaks data into smaller chunks (segments), ensures they’re delivered reliably, and reassembles them on arrival.",
+        network: "The Network layer decides the path the data takes using IP addresses. It handles routing across different networks.",
+        physical: "The Physical layer deals with actual data transmission — like cables, radio signals, or Wi-Fi that carry the data from one device to another."
+      };
 
-        const step = steps[index];
-        document.getElementById(step.id).classList.add("highlight");
-        document.getElementById("info").textContent = step.text;
-
-        setTimeout(() => {
-          document.getElementById(step.id).classList.remove("highlight");
-          index++;
-          nextStep();
-        }, 5000);
-      }
-
-      nextStep();
+      document.getElementById('layer-info').textContent = layerDescriptions[layer];
     }
 
     function completeModule(moduleIndex) {
