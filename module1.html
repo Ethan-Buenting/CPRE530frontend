@@ -83,7 +83,7 @@
         return;
         }
 
-        fetch(`${backendUrl}/api/user/module`, {
+        fetch(`${backendUrl}/api/users/module`, {
             method: "PUT",
             headers: {"Content-Type": "application/json"},
             body: JSON.stringify({ username, moduleIndex})
