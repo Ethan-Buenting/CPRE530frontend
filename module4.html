@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Cyber Word Match</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 20px;
+    }
+    h2 {
+      text-align: center;
+    }
+    p {
+      max-width: 600px;
+      margin: 0 auto 30px;
+      font-size: 18px;
+    }
+    .game-container {
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+      gap: 60px;
+      position: relative;
+    }
+    .column {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+    .item {
+      padding: 10px 20px;
+      background-color: #f0f0f0;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      cursor: pointer;
+      user-select: none;
+    }
+    .selected {
+      background-color: #cce5ff;
+      border-color: #66afe9;
+    }
+    canvas {
+      position: absolute;
+      top: 0;
+      left: 0;
+      pointer-events: none;
+      z-index: -1;
+    }
+  </style>
+</head>
+<body>
+
+  <h2>Cyber Word Match</h2>
+  <p>
+    Let's learn some important cybersecurity words! Click on a word on the left, then its matching definition on the right.
+    If you match them correctly, a line will connect them. See if you can get all 6!
+  </p>
+
+  <div class="game-container">
+    <canvas id="lineCanvas" width="1000" height="600"></canvas>
+
+    <div class="column" id="words">
+      <div class="item" data-type="word" data-id="0">Password</div>
+      <div class="item" data-type="word" data-id="1">Hacker</div>
+      <div class="item" data-type="word" data-id="2">Virus</div>
+      <div class="item" data-type="word" data-id="3">Firewall</div>
+      <div class="item" data-type="word" data-id="4">Packet</div>
+      <div class="item" data-type="word" data-id="5">Email</div>
+    </div>
+
+    <div class="column" id="definitions">
+      <div class="item" data-type="definition" data-id="0">A secret word or phrase used to log into something</div>
+      <div class="item" data-type="definition" data-id="1">Someone who breaks into computers</div>
+      <div class="item" data-type="definition" data-id="2">A program that harms your computer</div>
+      <div class="item" data-type="definition" data-id="3">A protection system that blocks unsafe things online</div>
+      <div class="item" data-type="definition" data-id="4">A small piece of data sent over the internet</div>
+      <div class="item" data-type="definition" data-id="5">Messages you send or receive on the internet</div>
+    </div>
+    <div>
+        <button onclick="completeModule(4)">Mark Complete & Go Home</button>
+    </div>
+  </div>
+
+  <script>
+    const backendUrl = "https://cyberquestjava.onrender.com";
+
+    const canvas = document.getElementById("lineCanvas");
+    const ctx = canvas.getContext("2d");
+    const matches = new Set();
+    let selectedWord = null;
+
+    function getCenterPosition(element) {
+      const rect = element.getBoundingClientRect();
+      return {
+        x: rect.left + rect.width / 2 + window.scrollX,
+        y: rect.top + rect.height / 2 + window.scrollY
+      };
+    }
+
+    function drawLine(fromEl, toEl) {
+      const from = getCenterPosition(fromEl);
+      const to = getCenterPosition(toEl);
+
+      ctx.beginPath();
+      ctx.moveTo(from.x - canvas.offsetLeft, from.y - canvas.offsetTop);
+      ctx.lineTo(to.x - canvas.offsetLeft, to.y - canvas.offsetTop);
+      ctx.strokeStyle = "#007bff";
+      ctx.lineWidth = 2;
+      ctx.stroke();
+    }
+
+    function clearSelections() {
+      document.querySelectorAll(".item").forEach(el => el.classList.remove("selected"));
+      selectedWord = null;
+    }
+
+    document.querySelectorAll(".item").forEach(item => {
+      item.addEventListener("click", () => {
+        const type = item.dataset.type;
+        const id = item.dataset.id;
+
+        if (type === "word") {
+          clearSelections();
+          selectedWord = item;
+          item.classList.add("selected");
+        } else if (type === "definition" && selectedWord) {
+          const wordId = selectedWord.dataset.id;
+          const defId = id;
+          const key = `${wordId}-${defId}`;
+
+          if (wordId === defId && !matches.has(key)) {
+            drawLine(selectedWord, item);
+            matches.add(key);
+            clearSelections();
+          } else {
+            alert("That's not the correct match. Try again!");
+            clearSelections();
+          }
+        }
+      });
+    });
+
+    function completeModule(moduleIndex) {
+        const username = localStorage.getItem("username");
+        if (!username) {
+        alert("No user logged in.");
+        return;
+        }
+
+        fetch(`${backendUrl}/api/users/module`, {
+            method: "PUT",
+            headers: {"Content-Type": "application/json"},
+            body: JSON.stringify({ username, moduleIndex})
+        })
+        .then(res => res.text())
+        .then(data => {
+            console.log("Response from backend:", data); //To log progress in the developer log (F12)
+            if (data === "Module Updated Successfully") {
+                window.location.href = "home.html";
+            } else {
+                alert(data);
+            }
+        })
+        .catch(err => {
+            console.error("Failed to update progress:", err);
+            alert("Could not save progress.");
+        });
+    }
+  </script>
+
+</body>
+</html>
