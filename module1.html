@@ -115,7 +115,7 @@
       }
     });
 
-    function completeModule(moduleIndex) {
+    function completeModule(moduleNum) {
         const username = localStorage.getItem("username");
         if (!username) {
         alert("No user logged in.");
@@ -125,7 +125,7 @@
         fetch(`${backendUrl}/api/users/module`, {
             method: "PUT",
             headers: {"Content-Type": "application/json"},
-            body: JSON.stringify({ username, moduleIndex})
+            body: JSON.stringify({ username, moduleNum})
         })
         .then(res => res.text())
         .then(data => {

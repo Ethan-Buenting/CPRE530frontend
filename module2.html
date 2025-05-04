@@ -76,7 +76,7 @@
       document.getElementById('layer-info').textContent = layerDescriptions[layer];
     }
 
-    function completeModule(moduleIndex) {
+    function completeModule(moduleNum) {
         const username = localStorage.getItem("username");
         if (!username) {
         alert("No user logged in.");
@@ -86,12 +86,11 @@
         fetch(`${backendUrl}/api/users/module`, {
             method: "PUT",
             headers: {"Content-Type": "application/json"},
-            body: JSON.stringify({ username, moduleIndex})
+            body: JSON.stringify({ username, moduleNum})
         })
         .then(res => res.text())
         .then(data => {
             console.log("Response from backend:", data); //To log progress in the developer log (F12)
-            console.log("Module Index: ", moduleIndex);
             if (data === "Module Updated Successfully") {
                 window.location.href = "home.html";
             } else {
