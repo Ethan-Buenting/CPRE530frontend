@@ -40,6 +40,11 @@
       background-color: #cce5ff;
       border-color: #66afe9;
     }
+    .matched {
+      background-color: #d4edda;
+      border-color: #28a745;
+      pointer-events: none;
+    }
     canvas {
       position: absolute;
       top: 0;
@@ -53,12 +58,12 @@
 
   <h2>Cyber Word Match</h2>
   <p>
-    Let's learn some important cybersecurity words! Click on a word on the left, then its matching definition on the right.
+    Let’s learn some important cybersecurity words! Click on a word on the left, then its matching definition on the right.
     If you match them correctly, a line will connect them. See if you can get all 6!
   </p>
 
-  <div class="game-container">
-    <canvas id="lineCanvas" width="1000" height="600"></canvas>
+  <div class="game-container" id="gameContainer">
+    <canvas id="lineCanvas"></canvas>
 
     <div class="column" id="words">
       <div class="item" data-type="word" data-id="0">Password</div>
@@ -77,9 +82,10 @@
       <div class="item" data-type="definition" data-id="4">A small piece of data sent over the internet</div>
       <div class="item" data-type="definition" data-id="5">Messages you send or receive on the internet</div>
     </div>
-    <div>
-        <button onclick="completeModule(4)">Mark Complete & Go Home</button>
-    </div>
+  </div>
+
+  <div>
+    <button onclick="completeModule(3)">Mark Complete & Go Home</button>
   </div>
 
   <script>
@@ -90,21 +96,28 @@
     const matches = new Set();
     let selectedWord = null;
 
+    function resizeCanvas() {
+      const container = document.getElementById("gameContainer");
+      canvas.width = container.offsetWidth;
+      canvas.height = container.offsetHeight;
+    }
+
     function getCenterPosition(element) {
       const rect = element.getBoundingClientRect();
       return {
-        x: rect.left + rect.width / 2 + window.scrollX,
-        y: rect.top + rect.height / 2 + window.scrollY
+        x: rect.left + rect.width / 2,
+        y: rect.top + rect.height / 2
       };
     }
 
     function drawLine(fromEl, toEl) {
       const from = getCenterPosition(fromEl);
       const to = getCenterPosition(toEl);
+      const canvasRect = canvas.getBoundingClientRect();
 
       ctx.beginPath();
-      ctx.moveTo(from.x - canvas.offsetLeft, from.y - canvas.offsetTop);
-      ctx.lineTo(to.x - canvas.offsetLeft, to.y - canvas.offsetTop);
+      ctx.moveTo(from.x - canvasRect.left, from.y - canvasRect.top);
+      ctx.lineTo(to.x - canvasRect.left, to.y - canvasRect.top);
       ctx.strokeStyle = "#007bff";
       ctx.lineWidth = 2;
       ctx.stroke();
@@ -115,31 +128,46 @@
       selectedWord = null;
     }
 
-    document.querySelectorAll(".item").forEach(item => {
-      item.addEventListener("click", () => {
-        const type = item.dataset.type;
-        const id = item.dataset.id;
+    function shuffleChildren(parent) {
+      const children = Array.from(parent.children);
+      children.sort(() => Math.random() - 0.5);
+      children.forEach(child => parent.appendChild(child));
+    }
 
-        if (type === "word") {
-          clearSelections();
-          selectedWord = item;
-          item.classList.add("selected");
-        } else if (type === "definition" && selectedWord) {
-          const wordId = selectedWord.dataset.id;
-          const defId = id;
-          const key = `${wordId}-${defId}`;
+    window.onload = () => {
+      resizeCanvas();
+      shuffleChildren(document.getElementById("definitions"));
 
-          if (wordId === defId && !matches.has(key)) {
-            drawLine(selectedWord, item);
-            matches.add(key);
+      document.querySelectorAll(".item").forEach(item => {
+        item.addEventListener("click", () => {
+          if (item.classList.contains("matched")) return;
+
+          const type = item.dataset.type;
+          const id = item.dataset.id;
+
+          if (type === "word") {
             clearSelections();
-          } else {
-            alert("That's not the correct match. Try again!");
-            clearSelections();
+            selectedWord = item;
+            item.classList.add("selected");
+          } else if (type === "definition" && selectedWord) {
+            const wordId = selectedWord.dataset.id;
+            const defId = id;
+            const key = `${wordId}-${defId}`;
+
+            if (wordId === defId && !matches.has(key)) {
+              drawLine(selectedWord, item);
+              matches.add(key);
+              selectedWord.classList.add("matched");
+              item.classList.add("matched");
+              clearSelections();
+            } else {
+              alert("That's not the correct match. Try again!");
+              clearSelections();
+            }
           }
-        }
+        });
       });
-    });
+    }
 
     function completeModule(moduleIndex) {
         const username = localStorage.getItem("username");
