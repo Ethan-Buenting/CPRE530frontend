@@ -95,9 +95,8 @@
 
     items.forEach(item => {
       item.addEventListener('dragstart', e => {
-        e.dataTransfer.setData('text/plain', item.textContent);
+        e.dataTransfer.setData('text', item.outerHTML);
         e.dataTransfer.setData('safe', item.dataset.safe);
-        e.dataTransfer.setData('id', item.textContent);
       });
     });
 
@@ -105,34 +104,35 @@
       zone.addEventListener('dragover', e => {
         e.preventDefault();
       });
+
       zone.addEventListener('drop', e => {
         e.preventDefault();
-        const text = e.dataTransfer.getData('text/plain');
         const safe = e.dataTransfer.getData('safe') === 'true';
-        const id = e.dataTransfer.getData('id');
+        const html = e.dataTransfer.getData('text');
 
-        const droppedItem = document.querySelector(`.drag-item:contains('${id}')`);
-        if (!droppedItem) return;
+        const temp = document.createElement('div');
+        temp.innerHTML = html;
+        const newElem = temp.firstChild;
 
-        // Remove existing item if it's still in the original area
-        droppedItem.remove();
-
-        const newElem = document.createElement('div');
-        newElem.className = 'drag-item';
-        newElem.textContent = text;
-        newElem.style.cursor = 'default';
         newElem.draggable = false;
+        newElem.style.cursor = 'default';
 
-        // Check correctness
         if (zone.id === 'safe-zone' && safe) {
-          newElem.style.backgroundColor = '#28a745'; // green for correct
+          newElem.style.backgroundColor = '#28a745';
         } else if (zone.id === 'blocked-zone' && !safe) {
           newElem.style.backgroundColor = '#28a745';
         } else {
-          newElem.style.backgroundColor = '#dc3545'; // red for wrong
+          newElem.style.backgroundColor = '#dc3545';
         }
 
         zone.appendChild(newElem);
+
+        // Remove from original list
+        document.querySelectorAll('.drag-item').forEach(item => {
+          if (item.textContent === newElem.textContent) {
+            item.remove();
+          }
+        });
       });
     });
 
