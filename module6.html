@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Module 6: Firewalls and Filters</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 20px;
+    }
+    h2 {
+      text-align: center;
+    }
+    p {
+      max-width: 700px;
+      margin: 0 auto 30px;
+      font-size: 18px;
+      text-align: center;
+    }
+    .game-area {
+      display: flex;
+      justify-content: center;
+      gap: 50px;
+      margin-top: 40px;
+      flex-wrap: wrap;
+    }
+    .firewall {
+      width: 100px;
+      height: 200px;
+      background-color: #cc0000;
+      color: white;
+      text-align: center;
+      line-height: 200px;
+      font-weight: bold;
+      border-radius: 10px;
+    }
+    .drop-zone {
+      border: 2px dashed #888;
+      min-height: 150px;
+      width: 200px;
+      padding: 10px;
+      text-align: center;
+      border-radius: 8px;
+      background-color: #f0f0f0;
+    }
+    .drag-item {
+      margin: 10px;
+      padding: 10px;
+      background-color: #007bff;
+      color: white;
+      border-radius: 5px;
+      cursor: move;
+    }
+  </style>
+</head>
+<body>
+
+  <h2>Module 6: Firewalls and Filters</h2>
+  <p>
+    A <strong>firewall</strong> is like a security guard that watches what websites try to come into your computer. It decides what to allow in and what to block, based on safety rules. Let's help sort out the good and bad websites using a firewall!
+  </p>
+
+  <div class="game-area">
+    <div>
+      <div class="drag-item" draggable="true" data-safe="true">www.education.com</div>
+      <div class="drag-item" draggable="true" data-safe="false">www.malware4u.ru</div>
+      <div class="drag-item" draggable="true" data-safe="true">www.kidsgames.org</div>
+      <div class="drag-item" draggable="true" data-safe="false">www.hack-me.biz</div>
+      <div class="drag-item" draggable="true" data-safe="true">www.library.org</div>
+      <div class="drag-item" draggable="true" data-safe="false">www.virusfree-downloads.cc</div>
+    </div>
+
+    <div class="firewall">FIREWALL</div>
+
+    <div class="drop-zone" id="safe-zone">
+      <strong>Safe Zone →</strong><br>
+      (Drop good sites here)
+    </div>
+
+    <div class="drop-zone" id="blocked-zone" style="margin-top: 20px;">
+      <strong>Blocked Zone ↓</strong><br>
+      (Drop bad sites here)
+    </div>
+  </div>
+
+  <div>
+    <button onclick="completeModule(6)">Mark Complete & Go Home</button>
+  </div>
+
+  <script>
+    const backendUrl = "https://cyberquestjava.onrender.com";
+
+    const items = document.querySelectorAll('.drag-item');
+    const dropZones = document.querySelectorAll('.drop-zone');
+
+    items.forEach(item => {
+      item.addEventListener('dragstart', e => {
+        e.dataTransfer.setData('text/plain', item.textContent);
+        e.dataTransfer.setData('safe', item.dataset.safe);
+        e.dataTransfer.setData('id', item.textContent);
+      });
+    });
+
+    dropZones.forEach(zone => {
+      zone.addEventListener('dragover', e => {
+        e.preventDefault();
+      });
+      zone.addEventListener('drop', e => {
+        e.preventDefault();
+        const text = e.dataTransfer.getData('text/plain');
+        const safe = e.dataTransfer.getData('safe') === 'true';
+        const id = e.dataTransfer.getData('id');
+
+        const droppedItem = document.querySelector(`.drag-item:contains('${id}')`);
+        if (!droppedItem) return;
+
+        // Remove existing item if it's still in the original area
+        droppedItem.remove();
+
+        const newElem = document.createElement('div');
+        newElem.className = 'drag-item';
+        newElem.textContent = text;
+        newElem.style.cursor = 'default';
+        newElem.draggable = false;
+
+        // Check correctness
+        if (zone.id === 'safe-zone' && safe) {
+          newElem.style.backgroundColor = '#28a745'; // green for correct
+        } else if (zone.id === 'blocked-zone' && !safe) {
+          newElem.style.backgroundColor = '#28a745';
+        } else {
+          newElem.style.backgroundColor = '#dc3545'; // red for wrong
+        }
+
+        zone.appendChild(newElem);
+      });
+    });
+
+    function completeModule(moduleNum) {
+        const username = localStorage.getItem("username");
+        if (!username) {
+        alert("No user logged in.");
+        return;
+        }
+
+        fetch(`${backendUrl}/api/users/module`, {
+            method: "PUT",
+            headers: {"Content-Type": "application/json"},
+            body: JSON.stringify({ username, moduleNum})
+        })
+        .then(res => res.text())
+        .then(data => {
+            console.log("Response from backend:", data); //To log progress in the developer log (F12)
+            if (data === "Module Updated Successfully") {
+                window.location.href = "home.html";
+            } else {
+                alert(data);
+            }
+        })
+        .catch(err => {
+            console.error("Failed to update progress:", err);
+            alert("Could not save progress.");
+        });
+    }
+  </script>
+
+</body>
+</html>
