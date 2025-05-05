@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Module 7: Email and Web Safety</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 20px;
+    }
+    h2 {
+      text-align: center;
+    }
+    p {
+      max-width: 700px;
+      margin: 0 auto 30px;
+      font-size: 18px;
+      text-align: center;
+    }
+    .example {
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      padding: 15px;
+      margin: 20px auto;
+      max-width: 700px;
+      background-color: #f9f9f9;
+    }
+    .buttons {
+      margin-top: 10px;
+    }
+    .buttons button {
+      margin-right: 10px;
+      padding: 8px 15px;
+      font-size: 14px;
+    }
+    .feedback {
+      margin-top: 10px;
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+
+<h2>Module 7: Stay Safe Online!</h2>
+<p>
+  The internet is full of cool websites and messages — but some are tricks trying to steal your information! Let's look at some examples and decide if they are safe or not.
+</p>
+
+<div class="example" id="ex1">
+  <h3>Example 1</h3>
+  <p><strong>Subject:</strong> YOU WON A FREE PHONE!<br>
+     <strong>From:</strong> contest@winbig-now.ru<br>
+     <strong>Message:</strong> Click this link now to claim your prize: <a href="#">www.w1n-big-now.ru</a></p>
+  <div class="buttons">
+    <button onclick="checkAnswer('ex1', false)">Safe</button>
+    <button onclick="checkAnswer('ex1', true)">Unsafe</button>
+  </div>
+  <div class="feedback" id="feedback-ex1"></div>
+</div>
+
+<div class="example" id="ex2">
+  <h3>Example 2</h3>
+  <p><strong>Subject:</strong> Library Book Due<br>
+     <strong>From:</strong> notify@library.org<br>
+     <strong>Message:</strong> Your book is due next week. Click here to renew: <a href="#">www.library.org/renew</a></p>
+  <div class="buttons">
+    <button onclick="checkAnswer('ex2', true)">Safe</button>
+    <button onclick="checkAnswer('ex2', false)">Unsafe</button>
+  </div>
+  <div class="feedback" id="feedback-ex2"></div>
+</div>
+
+<div class="example" id="ex3">
+  <h3>Example 3</h3>
+  <p><strong>Subject:</strong> Urgent Account Alert!<br>
+     <strong>From:</strong> security@paypa1.com<br>
+     <strong>Message:</strong> We need you to confirm your account info: <a href="#">www.paypa1.com/login</a></p>
+  <div class="buttons">
+    <button onclick="checkAnswer('ex3', false)">Safe</button>
+    <button onclick="checkAnswer('ex3', true)">Unsafe</button>
+  </div>
+  <div class="feedback" id="feedback-ex3"></div>
+</div>
+
+<div>
+    <button onclick="completeModule(7)">Mark Complete & Go Home</button>
+</div>
+
+<script>
+    const backendUrl = "https://cyberquestjava.onrender.com";
+
+    function checkAnswer(exampleId, pickedUnsafe) {
+        const feedback = document.getElementById(`feedback-${exampleId}`);
+        if (exampleId === 'ex1') {
+        if (pickedUnsafe) {
+            feedback.textContent = "✅ Correct! This is unsafe — it's offering a prize and uses a strange web address.";
+            feedback.style.color = 'green';
+        } else {
+            feedback.textContent = "❌ Oops! This is actually unsafe — look at the sketchy link and prize claim.";
+            feedback.style.color = 'red';
+        }
+        } else if (exampleId === 'ex2') {
+        if (pickedUnsafe) {
+            feedback.textContent = "❌ Nope! This is a real message from the library with a normal link.";
+            feedback.style.color = 'red';
+        } else {
+            feedback.textContent = "✅ Correct! This is a safe message from a trusted website.";
+            feedback.style.color = 'green';
+        }
+        } else if (exampleId === 'ex3') {
+        if (pickedUnsafe) {
+            feedback.textContent = "✅ Right! 'paypa1.com' is fake — scammers use similar names to trick you.";
+            feedback.style.color = 'green';
+        } else {
+            feedback.textContent = "❌ Be careful! This is unsafe — 'paypa1.com' is not the real PayPal site.";
+            feedback.style.color = 'red';
+        }
+        }
+    }
+
+    function completeModule(moduleNum) {
+        const username = localStorage.getItem("username");
+        if (!username) {
+            alert("No user logged in.");
+            return;
+        }
+
+        fetch(`${backendUrl}/api/users/module`, {
+            method: "PUT",
+            headers: {"Content-Type": "application/json"},
+            body: JSON.stringify({ username, moduleNum})
+        })
+        .then(res => res.text())
+        .then(data => {
+            console.log("Response from backend:", data); //To log progress in the developer log (F12)
+            if (data === "Module Updated Successfully") {
+                window.location.href = "home.html";
+            } else {
+                alert(data);
+            }
+        })
+        .catch(err => {
+            console.error("Failed to update progress:", err);
+            alert("Could not save progress.");
+        });
+    }
+</script>
+
+</body>
+</html>

@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Module 8: Secret Codes and Hidden Messages</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 20px;
+    }
+    h2 {
+      text-align: center;
+    }
+    p {
+      max-width: 700px;
+      margin: 0 auto 30px;
+      font-size: 18px;
+      text-align: center;
+    }
+    .section {
+      max-width: 600px;
+      margin: 20px auto;
+      text-align: center;
+    }
+    input[type="text"] {
+      width: 100%;
+      padding: 10px;
+      font-size: 16px;
+      margin-top: 10px;
+    }
+    button {
+      padding: 10px 20px;
+      margin: 10px;
+      font-size: 16px;
+      cursor: pointer;
+    }
+    .result {
+      margin-top: 20px;
+      font-weight: bold;
+      font-size: 18px;
+      color: #333;
+    }
+  </style>
+</head>
+<body>
+
+<h2>Module 8: Secret Codes and Hidden Messages</h2>
+<p>
+  Sometimes we want to send messages that only the person we’re talking to can read — like a secret note! Encryption is like giving your friend a <strong>secret language</strong>, called a <strong>key</strong>, that they can use to write to you. When they send you the message, only you can <strong>decode</strong> it and understand what it says!
+</p>
+
+<div class="section">
+  <label for="messageInput">Type your message:</label>
+  <input type="text" id="messageInput" placeholder="Enter your secret message here">
+
+  <div>
+    <button onclick="encryptMessage()">Encrypt Message</button>
+    <button onclick="decryptMessage()">Decrypt Message</button>
+  </div>
+
+  <div class="result" id="encryptedOutput"></div>
+  <div class="result" id="decryptedOutput"></div>
+</div>
+
+<div>
+    <button onclick="completeModule(8)">Mark Complete & Go Home</button>
+</div>
+
+<script>
+    const backendUrl = "https://cyberquestjava.onrender.com";
+    let encrypted = "";
+
+    function encryptMessage() {
+        const input = document.getElementById("messageInput").value;
+        if (input.trim() === "") {
+        alert("Please enter a message to encrypt.");
+        return;
+        }
+        encrypted = input.split("").reverse().join("");
+        document.getElementById("encryptedOutput").textContent = `Encrypted Message: ${encrypted}`;
+        document.getElementById("decryptedOutput").textContent = "";
+    }
+
+    function decryptMessage() {
+        if (!encrypted) {
+        alert("There is no encrypted message to decrypt yet.");
+        return;
+        }
+        const decrypted = encrypted.split("").reverse().join("");
+        document.getElementById("decryptedOutput").textContent = `Decrypted Message: ${decrypted}`;
+    }
+
+    function completeModule(moduleNum) {
+        const username = localStorage.getItem("username");
+        if (!username) {
+            alert("No user logged in.");
+            return;
+        }
+
+        fetch(`${backendUrl}/api/users/module`, {
+            method: "PUT",
+            headers: {"Content-Type": "application/json"},
+            body: JSON.stringify({ username, moduleNum})
+        })
+        .then(res => res.text())
+        .then(data => {
+            console.log("Response from backend:", data); //To log progress in the developer log (F12)
+            if (data === "Module Updated Successfully") {
+                window.location.href = "home.html";
+            } else {
+                alert(data);
+            }
+        })
+        .catch(err => {
+            console.error("Failed to update progress:", err);
+            alert("Could not save progress.");
+        });
+    }
+</script>
+
+</body>
+</html>
