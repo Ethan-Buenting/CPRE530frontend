@@ -61,13 +61,13 @@
   </p>
 
   <div class="game-area">
-    <div>
-      <div class="drag-item" draggable="true" data-safe="true">www.education.com</div>
-      <div class="drag-item" draggable="true" data-safe="false">www.malware4u.ru</div>
-      <div class="drag-item" draggable="true" data-safe="true">www.kidsgames.org</div>
-      <div class="drag-item" draggable="true" data-safe="false">www.hack-me.biz</div>
-      <div class="drag-item" draggable="true" data-safe="true">www.library.org</div>
-      <div class="drag-item" draggable="true" data-safe="false">www.virusfree-downloads.cc</div>
+    <div id="items-container">
+      <div class="drag-item" id="site1" draggable="true" data-safe="true">www.education.com</div>
+      <div class="drag-item" id="site2" draggable="true" data-safe="false">www.malware4u.ru</div>
+      <div class="drag-item" id="site3" draggable="true" data-safe="true">www.kidsgames.org</div>
+      <div class="drag-item" id="site4" draggable="true" data-safe="false">www.hack-me.biz</div>
+      <div class="drag-item" id="site5" draggable="true" data-safe="true">www.library.org</div>
+      <div class="drag-item" id="site6" draggable="true" data-safe="false">www.virusfree-downloads.cc</div>
     </div>
 
     <div class="firewall">FIREWALL</div>
@@ -89,14 +89,12 @@
 
   <script>
     const backendUrl = "https://cyberquestjava.onrender.com";
-
     const items = document.querySelectorAll('.drag-item');
     const dropZones = document.querySelectorAll('.drop-zone');
 
     items.forEach(item => {
       item.addEventListener('dragstart', e => {
-        e.dataTransfer.setData('text', item.outerHTML);
-        e.dataTransfer.setData('safe', item.dataset.safe);
+        e.dataTransfer.setData('text/plain', item.id);
       });
     });
 
@@ -107,32 +105,22 @@
 
       zone.addEventListener('drop', e => {
         e.preventDefault();
-        const safe = e.dataTransfer.getData('safe') === 'true';
-        const html = e.dataTransfer.getData('text');
+        const id = e.dataTransfer.getData('text/plain');
+        const draggedItem = document.getElementById(id);
 
-        const temp = document.createElement('div');
-        temp.innerHTML = html;
-        const newElem = temp.firstChild;
+        if (!draggedItem) return;
 
-        newElem.draggable = false;
-        newElem.style.cursor = 'default';
+        const safe = draggedItem.dataset.safe === 'true';
+        draggedItem.draggable = false;
+        draggedItem.style.cursor = 'default';
 
-        if (zone.id === 'safe-zone' && safe) {
-          newElem.style.backgroundColor = '#28a745';
-        } else if (zone.id === 'blocked-zone' && !safe) {
-          newElem.style.backgroundColor = '#28a745';
+        if ((zone.id === 'safe-zone' && safe) || (zone.id === 'blocked-zone' && !safe)) {
+          draggedItem.style.backgroundColor = '#28a745'; // correct
         } else {
-          newElem.style.backgroundColor = '#dc3545';
+          draggedItem.style.backgroundColor = '#dc3545'; // incorrect
         }
 
-        zone.appendChild(newElem);
-
-        // Remove from original list
-        document.querySelectorAll('.drag-item').forEach(item => {
-          if (item.textContent === newElem.textContent) {
-            item.remove();
-          }
-        });
+        zone.appendChild(draggedItem);
       });
     });
 
