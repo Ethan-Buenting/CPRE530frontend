@@ -28,7 +28,12 @@
 </head>
 <body>
 
-  <h2>Send a Message Across the Internet!</h2>
+  <h2>Module 3: How Data Moves</h2>
+  <p>
+    Data moves following network protocols from your computer to its designated destination, but how does it do so?
+    The data follows a path that is created by your router, jumping from service to service until it reaches its
+    destination. This module shows an example of what that transfer may look like.
+  </p>
 
   <div id="client" class="node">Your Computer</div>
   <div id="router" class="node">Router</div>
@@ -48,10 +53,10 @@
     const backendUrl = "https://cyberquestjava.onrender.com";
     
     const steps = [
-      { id: "client", text: "You're sending a message from your computer." },
-      { id: "router", text: "The router sends your data out of your house." },
-      { id: "isp", text: "Your Internet Service Provider (ISP) forwards it." },
-      { id: "server", text: "The message reaches the website's server!" }
+      { id: "client", text: "The data leaves your computer and enters into your home or schools router" },
+      { id: "router", text: "The router then forwards the packets from your home to your Internet Service Provider" },
+      { id: "isp", text: "Your Internet Service Provider forwards the data along its routers, closer and closer to your destination with each hop." },
+      { id: "server", text: "Your message reaches its destination, and the path reaches its conclusion." }
     ];
 
     function sendPacket() {

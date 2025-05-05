@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Module 1: The Internet</title>
+  <title>Module 2: TCP Architecture </title>
   <style>
     .section { display: none; margin-bottom: 20px; }
     .active { display: block; }
@@ -31,10 +31,13 @@
 
   <!-- Section 1: Intro -->
   <div id="intro" class="section active">
-    <h2>What is the Internet?</h2>
+    <h2>Module 2: TCP Architecture</h2>
     <p>
-      The internet is a massive network that connects computers around the world. It lets us send messages,
-      watch videos, visit websites, and play games by moving data between devices using agreed-upon rules called protocols.
+      The Transmission Control Protocol (TCP) is the default transport protocol of the Internet.
+      It transmits by breaking data down into packets, and then waits to recieve acknowledgement packets
+      to ensure that all of the data was received by the destination. TCP breaks down packet transmission into 
+      four seperate layers; physical, network, transport, and application. Each of these layers has a different
+      responsibility and role within packet transmission, which will be described in this module [2].
     </p>
     <button onclick="showSection('tcpInteractive')">Next</button>
   </div>
@@ -67,10 +70,17 @@
 
     function showLayer(layer) {
       const layerDescriptions = {
-        application: "The Application layer is where communication begins — like websites, email, and chat apps. It’s what you see and interact with.",
-        transport: "The Transport layer breaks data into smaller chunks (segments), ensures they’re delivered reliably, and reassembles them on arrival.",
-        network: "The Network layer decides the path the data takes using IP addresses. It handles routing across different networks.",
-        physical: "The Physical layer deals with actual data transmission — like cables, radio signals, or Wi-Fi that carry the data from one device to another."
+        application: "The Application layer refers to programs that rely on TCP to transmit data." +
+        "These are often the applications that the user interacts with, such as email, games, and web browsers",
+        transport: "The Transport Layer is the layer that is in charge of ensuring stable and reliable connection " +
+        "between the source and the destination. This is the layer that data is split into packets, as well as specifying " +
+        "where those packets go and at what rate. It also deals with error handling of lost or corrupted packets and recieves " +
+        "acknowledgement packets from the destination",
+        network: "The Network layer is responsible for the actual transfer of the packets, as well as controlling what" +
+        "paths are taken to get there",
+        physical: "The Physical layer is the physical components that are required to send and retrieve signals. It refers " +
+        "to the actual hardware used by both the source and the destination device used to transmit the data previously mentioned " +
+        "in the higer layers"
       };
 
       document.getElementById('layer-info').textContent = layerDescriptions[layer];
