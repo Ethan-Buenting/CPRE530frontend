@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Module 5: How the Internet Delivers Messages</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 20px;
+    }
+    h2 {
+      text-align: center;
+    }
+    .section {
+      margin: 30px 0;
+    }
+    .options {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      max-width: 600px;
+      margin: 0 auto;
+    }
+    .option-button {
+      padding: 10px 15px;
+      font-size: 16px;
+      border: none;
+      border-radius: 5px;
+      background-color: #007bff;
+      color: white;
+      cursor: pointer;
+    }
+    .description {
+      display: none;
+      margin-top: 10px;
+      background-color: #f0f0f0;
+      padding: 15px;
+      border-radius: 5px;
+    }
+  </style>
+</head>
+<body>
+
+  <h2>Module 5: How the Internet Delivers Messages</h2>
+  <p>
+    Every time you send a message online — whether it’s a game move, a picture, or an email — it travels across invisible roads! These roads are made up of tiny rules called <strong>protocols</strong>. Let's learn how your messages move from your computer all the way across the world.
+  </p>
+
+  <!-- Physical Layer -->
+  <div class="section">
+    <h3>Step 1: How do you want to send your message?</h3>
+    <div class="options">
+      <button class="option-button" onclick="showDescription('ethernet')">Ethernet (Wheeled Truck)</button>
+      <button class="option-button" onclick="showDescription('wifi')">Wi-Fi (Helicopter)</button>
+    </div>
+    <div id="ethernet" class="description">
+      Like a delivery truck: fast and private, but it needs a cable to stay connected.
+    </div>
+    <div id="wifi" class="description">
+      Like a helicopter: very convenient and wireless, but easier for others to "see."
+    </div>
+  </div>
+
+  <!-- Network Layer -->
+  <div class="section">
+    <h3>Step 2: What kind of address system do you want to use?</h3>
+    <div class="options">
+      <button class="option-button" onclick="showDescription('ipv4')">IPv4 (Old Map)</button>
+      <button class="option-button" onclick="showDescription('ipv6')">IPv6 (New GPS)</button>
+    </div>
+    <div id="ipv4" class="description">
+      Like using an old but reliable road map — it still works for most destinations.
+    </div>
+    <div id="ipv6" class="description">
+      Like using a GPS with way more addresses — perfect for smart devices and future tech.
+    </div>
+  </div>
+
+  <!-- Transport Layer -->
+  <div class="section">
+    <h3>Step 3: How should it be delivered?</h3>
+    <div class="options">
+      <button class="option-button" onclick="showDescription('tcp')">TCP (Tracked Delivery)</button>
+      <button class="option-button" onclick="showDescription('udp')">UDP (Express Drop-Off)</button>
+    </div>
+    <div id="tcp" class="description">
+      Like tracked mail — it double checks delivery and makes sure everything arrives in order.
+    </div>
+    <div id="udp" class="description">
+      Like express shipping — it's fast, but there's no guarantee it all makes it safely.
+    </div>
+  </div>
+
+  <div>
+    <button onclick="completeModule(5)">Mark Complete & Go Home</button>
+  </div>
+
+  <script>
+    const backendUrl = "https://cyberquestjava.onrender.com";
+
+    function showDescription(id) {
+      document.querySelectorAll('.description').forEach(desc => desc.style.display = 'none');
+      document.getElementById(id).style.display = 'block';
+    }
+
+    function completeModule(moduleNum) {
+        const username = localStorage.getItem("username");
+        if (!username) {
+        alert("No user logged in.");
+        return;
+        }
+
+        fetch(`${backendUrl}/api/users/module`, {
+            method: "PUT",
+            headers: {"Content-Type": "application/json"},
+            body: JSON.stringify({ username, moduleNum})
+        })
+        .then(res => res.text())
+        .then(data => {
+            console.log("Response from backend:", data); //To log progress in the developer log (F12)
+            if (data === "Module Updated Successfully") {
+                window.location.href = "home.html";
+            } else {
+                alert(data);
+            }
+        })
+        .catch(err => {
+            console.error("Failed to update progress:", err);
+            alert("Could not save progress.");
+        });
+    }
+  </script>
+
+</body>
+</html>
