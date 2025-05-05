@@ -51,6 +51,16 @@
       border-radius: 5px;
       cursor: move;
     }
+    #undoBtn {
+      display: block;
+      margin: 30px auto 0;
+      padding: 10px 20px;
+      font-size: 16px;
+      background-color: #ffc107;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
   </style>
 </head>
 <body>
@@ -82,6 +92,7 @@
       (Drop bad sites here)
     </div>
   </div>
+  <button id="undoBtn">Undo Last Move</button>
 
   <div>
     <button onclick="completeModule(6)">Mark Complete & Go Home</button>
@@ -91,6 +102,7 @@
     const backendUrl = "https://cyberquestjava.onrender.com";
     const items = document.querySelectorAll('.drag-item');
     const dropZones = document.querySelectorAll('.drop-zone');
+    let lastMove = null;
 
     items.forEach(item => {
       item.addEventListener('dragstart', e => {
@@ -111,17 +123,29 @@
         if (!draggedItem) return;
 
         const safe = draggedItem.dataset.safe === 'true';
-        draggedItem.draggable = false;
-        draggedItem.style.cursor = 'default';
+        lastMove = { element: draggedItem, fromZone: zone.id };
 
         if ((zone.id === 'safe-zone' && safe) || (zone.id === 'blocked-zone' && !safe)) {
           draggedItem.style.backgroundColor = '#28a745'; // correct
+          draggedItem.draggable = false;
+          draggedItem.style.cursor = 'default';
         } else {
           draggedItem.style.backgroundColor = '#dc3545'; // incorrect
+          draggedItem.draggable = true; // allow retry
+          draggedItem.style.cursor = 'move';
         }
 
         zone.appendChild(draggedItem);
       });
+    });
+
+    document.getElementById('undoBtn').addEventListener('click', () => {
+      if (!lastMove) return;
+      document.getElementById('items-container').appendChild(lastMove.element);
+      lastMove.element.style.backgroundColor = '#007bff';
+      lastMove.element.draggable = true;
+      lastMove.element.style.cursor = 'move';
+      lastMove = null;
     });
 
     function completeModule(moduleNum) {
